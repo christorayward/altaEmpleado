@@ -26,7 +26,6 @@
   </script>
   -->
 
-  <script src="/js/altaEmpleado.js"></script>
   <script src="/js/img.js"></script> <!--Imagenes en Base64-->
   <link rel="stylesheet" href="/css/style.css">
   <link href="/css/form-validation.css" rel="stylesheet">
@@ -54,7 +53,7 @@
 
       <div class="">
         <!------------Empieza el formulario------------>
-        <form class="needs-validation" onsubmit="return false" novalidate>
+        <form name="formaltaEmpleado" class="needs-validation" onsubmit="return false" novalidate>
           <!-- onsubmit="return false; Sirve Para no enviar el formulario pero hacer la validación -->
           <!------------Datos Personales------------>
           <h5>Datos Personales</h5>
@@ -208,7 +207,7 @@
             <div class="col-md-4">
               <label for="colonia_Personal" class="form-label">Colonia:</label>
               <input type="text" name="colonia_Personal" class="form-control text-uppercase" id="colonia_Personal"
-                placeholder="" pattern="[A-Za-z ñÑáéíóöúüÁÉÍÓÖÚÜ]{0,30}" required>
+                placeholder="" pattern="[A-Za-z0-9 ñÑáéíóöúüÁÉÍÓÖÚÜ]{0,30}" required>
               <div class="invalid-feedback">
                 Por favor escribe su colonia.
               </div>
@@ -244,7 +243,7 @@
             <!------------Datos de Estudios Escolares: (Solo por primera vez)------------>
             <h5>Datos de Beneficiario Tarjeta de Nómina:</h5>
 
-            <div class="col-md-6">
+            <div class="col-md-4">
               <label for="nombres_Benef" class="form-label">Nombre Completo:</label>
               <input type="text" name="nombres_Benef" class="form-control text-uppercase" id="nombres_Benef"
                 placeholder="" pattern="[a-zA-ZñÑáéíóöúüÁÉÍÓÖÚÜ ]{0,70}" required>
@@ -253,9 +252,9 @@
               </div>
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-4">
               <label for="parentesco_Benef" class="form-label">Parentesco:</label>
-              <select name=parentesco_Benef class="form-select" id="parentesco_Benef" required>
+              <select name=parentesco_Benef class="form-select" id="parentesco_Benef" onchange="checkOption()" required>
                 <option value="">Selecciona...</option>
                 <option value="MADRE">Madre</option>
                 <option value="PADRE">Padre</option>
@@ -265,6 +264,7 @@
                 <option value="HIJA">Hija</option>
                 <option value="HERMANO">Hermano</option>
                 <option value="HERMANA">Hermana</option>
+                <option value="OTRO">Otro</option>
               </select>
               <div class="invalid-feedback">
                 Por favor selecciona el parentesco.
@@ -272,9 +272,18 @@
             </div>
 
             <div class="col-md-4">
+              <label for="otro_Benef" class="form-label">Otro:</label>
+              <input type="text" name="otro_Benef" class="form-control text-uppercase" id="otro_Benef" placeholder=""
+                pattern="[a-zA-ZñÑáéíóöúüÁÉÍÓÖÚÜ ]{0,30}" disabled required>
+              <div class="invalid-feedback">
+                Por favor escribe un parentesco.
+              </div>
+            </div>
+
+            <div class="col-md-4">
               <label for="RFC_Benef" class="form-label">RFC:</label>
               <input type="text" name="RFC_Benef" class="form-control text-uppercase" id="RFC_Benef"
-              pattern="^[A-Za-z0-9]{10}([A-Za-z0-9]{3})?$" required>
+                pattern="^[A-Za-z0-9]{10}([A-Za-z0-9]{3})?$" required>
               <div class="invalid-feedback">
                 Por favor escribe un RFC válido.
               </div>
@@ -334,7 +343,7 @@
             <div class="col-md-4">
               <label for="colonia_Benef" class="form-label">Colonia:</label>
               <input type="text" name="colonia_Benef" class="form-control text-uppercase" id="colonia_Benef"
-                placeholder="" pattern="[A-Za-z ñÑáéíóöúüÁÉÍÓÖÚÜ]{0,30}" required>
+                placeholder="" pattern="[A-Za-z0-9 ñÑáéíóöúüÁÉÍÓÖÚÜ]{0,30}" required>
               <div class="invalid-feedback">
                 Por favor escribe su colonia.
               </div>
@@ -384,6 +393,16 @@
   </div>
 
   <script>
+
+    //Habilitar opción de otros en select Parentesco
+    function checkOption() {
+      if (document.getElementById('parentesco_Benef').value == 'OTRO') { document.getElementById('otro_Benef').disabled = false }
+      else { 
+        document.getElementById('otro_Benef').disabled = true 
+        document.getElementById('otro_Benef').value = "";
+      }
+    }
+
     //Script para generar datos en cédula 0
     //Datos Personales:
     var nombres_Personal, aPaterno_Personal, aMaterno_Personal, RFC_Personal, CURP_Personal, INE_Personal,
@@ -391,7 +410,7 @@
     //Domicilio Actual:
     var entfed_Personal, mun_Personal, colonia_Personal, calle_Personal, numExt_Personal, cp_Personal;
     //Datos Beneficiario Nómina
-    var nombres_Benef, parentesco_Benef, RFC_Benef, entfed_Benef, mun_Benef, calle_Benef, cp_Benef;
+    var nombres_Benef, parentesco_Benef, otro_Benef = null, RFC_Benef, entfed_Benef, mun_Benef, calle_Benef, cp_Benef;
 
 
     //submit
@@ -414,13 +433,14 @@
       cp_Personal = document.getElementById("cp_Personal").value.toUpperCase();
       nombres_Benef = document.getElementById("nombres_Benef").value.toUpperCase();
       parentesco_Benef = document.getElementById("parentesco_Benef").value.toUpperCase();
+      otro_Benef = document.getElementById("otro_Benef").value.toUpperCase();
       RFC_Benef = document.getElementById("RFC_Benef").value.toUpperCase();
       entfed_Benef = document.getElementById("entfed_Benef").value.toUpperCase();
       mun_Benef = document.getElementById("mun_Benef").value.toUpperCase();
       calle_Benef = document.getElementById("calle_Benef").value.toUpperCase();
       cp_Benef = document.getElementById("cp_Benef").value.toUpperCase();
 
-      
+
       //alert(CURP_Personal + " " + RFC_Personal + " " + aPaterno_Personal + " " + aMaterno_Personal + " " +
       //  nombres_Personal); //Era una alerta de prueba
 
